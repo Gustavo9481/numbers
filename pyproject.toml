@@ -1,0 +1,31 @@
+[project]
+name = "pycalc"
+version = "0.1.0"
+description = "Calculadora multiplataforma con lógica Rust y UI Flet"
+requires-python = ">=3.12"
+dependencies = [
+    "flet>=0.24",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "ruff>=0.4",
+]
+
+[build-system]
+requires = ["maturin>=1.5"]
+build-backend = "maturin"
+
+[tool.maturin]
+manifest-path = "core/Cargo.toml"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_functions = "test_*"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"

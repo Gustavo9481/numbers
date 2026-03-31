@@ -1,0 +1,15 @@
+[package]
+name = "pycalc-core"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "pycalc_core"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.28", features = ["extension-module"] }
+thiserror = "1.0"
+
+[profile.release]
+opt-level = 3
