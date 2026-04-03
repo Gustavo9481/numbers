@@ -17,3 +17,5 @@ class InvalidOperationError(CalculatorError):
 class CalculationOverflowError(CalculatorError):
     """Error lanzado cuando el resultado excede los límites numéricos."""
     pass
+
+# NOTE: notas realizadas
