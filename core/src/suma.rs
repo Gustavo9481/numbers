@@ -1,9 +1,6 @@
 //! Módulo de suma.
 
-use pyo3::prelude::*;
-
-/// Suma dos números `f64`.
-#[pyfunction]
-pub fn add(a: f64, b: f64) -> f64 {
-    a + b
+/// Suma una lista de números `f64`.
+pub fn execute(numbers: Vec<f64>) -> f64 {
+    numbers.iter().sum()
 }

@@ -1,57 +1,67 @@
 """
-Tests de integración para el módulo de servicios.
-Verifica la comunicación entre Python (services) y el core de Rust.
+Pruebas de integración para la capa de servicios de la calculadora.
 """
 import pytest
 from services.calculator_service import CalculatorService
-from schemas.calculation import CalculationResult
 from exceptions.calculator import DivisionByZeroError
+from schemas.calculation import CalculationResult
 
 @pytest.fixture
-def calc_service():
-    """Fixture que proporciona una instancia limpia del servicio."""
+def service():
+    """Retorna una instancia fresca del servicio de calculadora."""
     return CalculatorService()
 
-def test_service_addition(calc_service):
-    """Verifica que la suma a través del servicio sea correcta."""
-    result = calc_service.perform_addition(10.0, 5.0)
-    
-    assert isinstance(result, CalculationResult)
-    assert result.result == 15.0
-    assert result.operation == "suma"
-    assert result.inputs == (10.0, 5.0)
+class TestServiceArithmetic:
+    """Verifica que el servicio maneja correctamente las operaciones multivariable."""
 
-def test_service_division_by_zero(calc_service):
-    """Verifica que el servicio capture el error de Rust y lance nuestra excepción."""
-    with pytest.raises(DivisionByZeroError) as excinfo:
-        calc_service.perform_division(10.0, 0.0)
-    
-    assert "No es posible dividir por cero" in str(excinfo.value)
+    def test_perform_addition_multi(self, service):
+        """Prueba la suma con múltiples argumentos variables."""
+        res = service.perform_addition(1, 2, 3, 4)
+        assert res.result == 10.0
+        assert res.operation == "suma"
+        assert res.inputs == (1, 2, 3, 4)
 
-def test_service_history_management(calc_service):
-    """Verifica que el historial registre las operaciones correctamente."""
-    # Realizamos un par de operaciones
-    calc_service.perform_addition(1.0, 1.0)
-    calc_service.perform_multiplication(2.0, 3.0)
-    
-    history = calc_service.get_history()
-    
-    assert len(history) == 2
-    assert history[0].operation == "suma"
-    assert history[1].operation == "multiplicación"
-    assert history[1].result == 6.0
+    def test_perform_subtraction_multi(self, service):
+        """Prueba la resta con múltiples argumentos variables."""
+        res = service.perform_subtraction(100, 20, 10)
+        assert res.result == 70.0
+        assert res.inputs == (100, 20, 10)
 
-def test_service_clear_history(calc_service):
-    """Verifica la limpieza del historial."""
-    calc_service.perform_addition(5.0, 5.0)
-    assert len(calc_service.get_history()) == 1
-    
-    calc_service.clear_history()
-    assert len(calc_service.get_history()) == 0
+    def test_perform_multiplication_multi(self, service):
+        """Prueba la multiplicación con múltiples argumentos variables."""
+        res = service.perform_multiplication(2, 3, 4)
+        assert res.result == 24.0
 
-def test_service_percentage(calc_service):
-    """Verifica el cálculo de porcentaje a través del servicio."""
-    result = calc_service.perform_percentage(20.0, 200.0)
-    
-    assert result.result == 40.0
-    assert result.operation == "porcentaje"
+    def test_perform_division_multi(self, service):
+        """Prueba la división con múltiples argumentos variables."""
+        res = service.perform_division(100, 2, 5)
+        assert res.result == 10.0
+
+    def test_perform_division_by_zero(self, service):
+        """Prueba el manejo de errores en división por cero."""
+        with pytest.raises(DivisionByZeroError):
+            service.perform_division(10, 0, 5)
+
+    def test_perform_percentage(self, service):
+        """Prueba el cálculo de porcentaje (sigue siendo binario)."""
+        res = service.perform_percentage(50, 200)
+        assert res.result == 100.0
+
+class TestServiceHistory:
+    """Verifica la gestión del historial en el servicio."""
+
+    def test_history_recording(self, service):
+        """Asegura que los cálculos se graban en el historial."""
+        service.perform_addition(1, 1)
+        service.perform_multiplication(2, 2)
+        
+        history = service.get_history()
+        assert len(history) == 2
+        assert history[0].operation == "suma"
+        assert history[1].operation == "multiplicación"
+
+    def test_clear_history(self, service):
+        """Prueba el vaciado del historial."""
+        service.perform_addition(1, 1)
+        service.clear_history()
+        assert len(service.get_history()) == 0

@@ -1,9 +1,9 @@
 //! Módulo de multiplicación.
 
-use pyo3::prelude::*;
-
-/// Multiplica dos números `f64`.
-#[pyfunction]
-pub fn multiply(a: f64, b: f64) -> f64 {
-    a * b
+/// Multiplica una lista de números `f64`.
+pub fn execute(numbers: Vec<f64>) -> f64 {
+    if numbers.is_empty() {
+        return 0.0;
+    }
+    numbers.iter().product()
 }
