@@ -5,6 +5,7 @@ description = "Calculadora multiplataforma con lógica Rust y UI Flet"
 requires-python = ">=3.12"
 dependencies = [
     "flet>=0.24",
+    "pydantic>=2.0",
 ]
 
 [project.optional-dependencies]
@@ -25,6 +26,17 @@ manifest-path = "core/Cargo.toml"
 testpaths = ["tests"]
 python_files = "test_*.py"
 python_functions = "test_*"
+addopts = "--cov=services --cov=schemas --cov-report=term-missing --cov-report=html"
+
+[tool.coverage.run]
+branch = true
+source = ["services", "schemas"]
+omit = ["**/__init__.py"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+fail_under = 80
 
 [tool.ruff]
 line-length = 100

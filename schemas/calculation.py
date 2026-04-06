@@ -1,27 +1,34 @@
 """
-Modelos de datos para el servicio de calculadora.
+Modelos de datos para el servicio de calculadora utilizando Pydantic.
 """
-from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional
+from typing import Dict, Tuple
 
-@dataclass(frozen=True)
-class CalculationResult:
+from pydantic import BaseModel, ConfigDict, Field
+
+
+class CalculationResult(BaseModel):
     """Representa el resultado de una operación matemática.
-    
+
     Attributes:
         operation (str): El nombre de la operación realizada.
         result (float): El valor numérico resultante.
         timestamp (datetime): La fecha y hora en que se realizó el cálculo.
-        inputs (tuple[float, ...]): Los valores de entrada utilizados.
-        metadata (dict): Información adicional sobre la ejecución.
+        inputs (Tuple[float, ...]): Los valores de entrada utilizados.
+        metadata (Dict): Información adicional sobre la ejecución.
     """
+
+    model_config = ConfigDict(frozen=True)
+
     operation: str
     result: float
-    inputs: tuple[float, ...]
-    timestamp: datetime = field(default_factory=datetime.now)
-    metadata: dict = field(default_factory=dict)
+    inputs: Tuple[float, ...]
+    timestamp: datetime = Field(default_factory=datetime.now)
+    metadata: Dict = Field(default_factory=dict)
 
     def __str__(self) -> str:
         """Representación legible del resultado."""
-        return f"{self.operation.capitalize()}: {self.result} (Calculado el {self.timestamp.strftime('%H:%M:%S')})"
+        return (
+            f"{self.operation.capitalize()}: {self.result} "
+            f"(Calculado el {self.timestamp.strftime('%H:%M:%S')})"
+        )

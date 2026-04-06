@@ -65,3 +65,22 @@ class TestServiceHistory:
         service.perform_addition(1, 1)
         service.clear_history()
         assert len(service.get_history()) == 0
+
+class TestSchemaValidation:
+    """Verifica que el esquema Pydantic aplica las reglas de validación."""
+
+    def test_calculation_result_invalid_types(self):
+        """Asegura que Pydantic valida los tipos de datos en el resultado."""
+        from pydantic import ValidationError
+        with pytest.raises(ValidationError):
+            # result debería ser float, no un string no convertible
+            CalculationResult(operation="suma", result="invalid", inputs=(1, 2))
+
+    def test_calculation_result_immutability(self):
+        """Verifica que el resultado es inmutable (frozen)."""
+        from pydantic import ValidationError
+        res = CalculationResult(operation="suma", result=10.0, inputs=(1, 9))
+        with pytest.raises(ValidationError):
+            # No debería permitir modificar atributos
+            res.result = 20.0
+
