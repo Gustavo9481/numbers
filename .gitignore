@@ -70,5 +70,8 @@ Cargo.lock
 AGENTS.md
 propose*.md
 
+# resources
+*.jpg
+
 # OS
 Thumbs.db
